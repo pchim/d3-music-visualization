@@ -1,6 +1,5 @@
-//var visualize = function() {
+var visualize = function() {
 	var freqData = new Uint8Array(1024);
-
 	// set up and create svg
 	var svgHeight = 300;
 	var svgWidth = 1024;
@@ -17,7 +16,7 @@
 	}
 	var svg = createSVG('body', svgHeight, svgWidth);
 
-	// set up nodes
+	// set up color nodes
 	svg.selectAll('circle')
 		 .data(freqData)
 		 .enter()
@@ -34,6 +33,32 @@
 		 })
 		 .classed('node', true); 
 
-//};
+	// set up audio context
+	var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+	var audioElement = document.getElementById('audioElement');
+	var audioSource = audioContext.createMediaElementSource(audioElement);
+	var analyser = audioContext.createAnalyser();
 
-//visualize();
+	// connect analyser to audio source
+	audioSource.connect(analyser);
+	audioSource.connect(audioContext.destination);
+
+	// stream the frequency data
+	var visColors = function(){
+		// run fn before repainting to screen
+		requestAnimationFrame(visColors);
+
+		// get frequency data
+		analyser.getByteFrequencyData(freqData);
+
+		svg.selectAll('circle.node')
+			 .data(freqData)
+			 .attr('cy', function(d) {
+			 	return svgHeight - d;
+			 })
+	};
+	visColors();
+
+};
+
+visualize();
