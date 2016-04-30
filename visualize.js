@@ -54,7 +54,6 @@ var visualize = function() {
 	var bgChange = function(){
 		// 15 seconds
 		var transitionTime = 15000;
-		console.log(bgHsl);
 		if (bgSun === 'up'){
 			if (bgLight === 0) {
 				bgLight = 1;
@@ -102,18 +101,29 @@ var visualize = function() {
 	audioSource.connect(analyser);
 	audioSource.connect(audioContext.destination);
 
+	var avgSound = 0;
 	// stream the frequency data
 	var visColors = function(){
 		// run fn before repainting to screen
 		requestAnimationFrame(visColors);
+
+
 		// get frequency data
 		analyser.getByteFrequencyData(freqData);
+		// get average
+		var total = 0;
+		for (var i = 0; i < freqData.length; i++){
+			total += freqData[i];
+		}
+		avgSound = Math.round(total/freqData.length);
 
+		// make circles move
 		svg.selectAll('circle.node')
 			 .data(freqData)
 			 .attr('cy', function(d) {
 			 	return svgHeight/2 - d;
 			 });
+		// make dancers shake up and down
 	};
 
 	// add dancers
@@ -141,7 +151,7 @@ var visualize = function() {
 	var addDancers = function() {
 		var randomDancer = constDancers[Math.floor(Math.random()*constDancers.length)];
 		allDancers.push(randomDancer);
-		svg.selectAll('image.dancer')
+		var newDancers = svg.selectAll('image.dancer')
 							.data(allDancers)
 							.enter()
 							.append('image')
@@ -150,12 +160,32 @@ var visualize = function() {
 							.attr('width', 80)
 							.attr('x', Math.random()*svgWidth)
 							.attr('y', svgHeight/2 + Math.random()*(svgHeight/2))
-							.attr('xlink:href', function(d) { return d; });		
+							.attr('xlink:href', function(d) { return d; });
+		newDancers.attr('initial_y', function(){ return d3.select(this).attr('y')});
 	};
 
+	var step = 'up';
 	var stepDancers = function() {
-
+		if (step === 'up'){
+			svg.selectAll('image.dancer')
+			.each(function(d, i) {
+			var currY = d3.select(this).attr('y');
+			d3.select(this)
+			  .transition(100)
+			  .attr('y', function(){ return (currY - avgSound); })
+			});
+			step = 'down';
+			setTimeout(stepDancers, 110);	 
+		} else if (step === 'down'){
+			svg.selectAll('image.dancer')
+			.transition().duration(100)
+			.attr('y', function(){ return d3.select(this).attr('initial_y')});	 
+			step = 'up';
+			setTimeout(stepDancers, 110);
+		}
+		
 	};
+
 
 	d3.select('.add-dancer')
 		.on('click', function() {
@@ -164,6 +194,7 @@ var visualize = function() {
 
 	bgChange();
 	visColors();
+	stepDancers();
 
 
 
