@@ -6,18 +6,22 @@
         <link rel="stylesheet" type="text/css" href="styles.css">
         <script src="d3/d3.js" charset="utf-8"></script>
 
-<audio id="audioElement" src="./assets/avicii_wfl.mp3"></audio>
-<div>
-  <button onclick="document.getElementById('audioElement').play()">Play the Audio</button>
-  <button onclick="document.getElementById('audioElement').pause()">Pause the Audio</button>
-  <button onclick="document.getElementById('audioElement').volume+=0.1">Increase Volume</button>
-  <button onclick="document.getElementById('audioElement').volume-=0.1">Decrease Volume</button>
-</div>
-
+        <audio id="audioElement" src="./assets/avicii_nit.mp3"></audio>
+        <image id="img1" src="./gifs/bear.gif" style="display: none"/>
+        <image id="img2" src="./gifs/light.gif" style="display: none"/>
+        <image id="img3" src="./gifs/link_dance.gif" style="display: none"/>
+        <image id="img4" src="./gifs/panda.gif" style="display: none"/>
+        <image id="img5" src="./gifs/pikachu.gif" style="display: none"/>
+        <image id="img6" src="./gifs/shark.gif" style="display: none"/>
+        <div>
+          <button onclick="document.getElementById('audioElement').play()">Play the Audio</button>
+          <button onclick="document.getElementById('audioElement').pause()">Pause the Audio</button>
+          <button onclick="document.getElementById('audioElement').volume+=0.1">Increase Volume</button>
+          <button onclick="document.getElementById('audioElement').volume-=0.1">Decrease Volume</button>
+          <button class='add-dancer'>Add a Dancer</button>
+        </div>  
     </head>
     <body>
-
-
     <script src="visualize.js"></script>
     </body>
 
